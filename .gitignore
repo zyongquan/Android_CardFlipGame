@@ -39,3 +39,6 @@ google-services.json
 
 # Android Studio 自动生成的 Gradle Daemon JVM 配置（本地环境相关）
 gradle/gradle-daemon-jvm.properties
+
+# 实验报告（单独作为附件提交，不进仓库）
+/*.docx

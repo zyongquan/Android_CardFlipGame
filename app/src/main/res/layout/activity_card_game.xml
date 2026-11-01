@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 翻牌游戏界面：顶部是得分与进度，中间是牌桌（12 张牌），底部是「重置游戏」「退出」 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_game_table"
+    android:orientation="vertical">
+
+    <!-- 得分条 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="4dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="得分：0" />
+
+            <TextView
+                android:id="@+id/tv_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#CCFFFFFF"
+                android:textSize="13sp"
+                tools:text="已配对 0 / 12 张" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 牌桌：3 列网格 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_cards"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingStart="10dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="4dp"
+        tools:listitem="@layout/item_card" />
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="18dp">
+
+        <Button
+            android:id="@+id/btn_reset_game"
+            style="@style/Widget.CardFlipGame.Button"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/teal_200"
+            android:text="@string/btn_reset_game"
+            android:textColor="@color/text_primary" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            style="@style/Widget.CardFlipGame.Button"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/btn_neutral"
+            android:text="@string/btn_exit" />
+    </LinearLayout>
+</LinearLayout>

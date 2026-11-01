@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题色 -->
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- 页面与卡片 -->
+    <color name="screen_bg">#FFF4F5FB</color>
+    <color name="card_bg">#FFFFFFFF</color>
+    <color name="card_stroke">#FFE3E6F0</color>
+    <color name="edit_bg">#FFF7F8FC</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#FF1F2430</color>
+    <color name="text_secondary">#FF6B7280</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 游戏桌面：深色渐变的“牌桌”，衬托白色的牌面 -->
+    <color name="table_dark">#FF161A3D</color>
+    <color name="table_light">#FF2B2F6B</color>
+
+    <!-- 牌背与牌面 -->
+    <color name="card_back_start">#FF7C4DFF</color>
+    <color name="card_back_end">#FF3949AB</color>
+    <color name="card_face_bg">#FFFFFFFF</color>
+    <color name="suit_red">#FFE53935</color>
+    <color name="suit_black">#FF212121</color>
+    <color name="card_matched_border">#FF2E7D32</color>
+    <color name="card_matched_bg">#FFE8F5E9</color>
+
+    <!-- 主界面信息行 / 按钮 -->
+    <color name="btn_neutral">#FF78909C</color>
+</resources>

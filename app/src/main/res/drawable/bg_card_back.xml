@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 牌背：紫蓝渐变 + 浅色描边，中间用花色符号做暗纹 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="315"
+        android:endColor="@color/card_back_end"
+        android:startColor="@color/card_back_start" />
+    <corners android:radius="12dp" />
+    <stroke
+        android:width="2dp"
+        android:color="#33FFFFFF" />
+</shape>

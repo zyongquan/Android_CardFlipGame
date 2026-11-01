@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 已经配对的牌：浅绿色底 + 绿色描边，便于一眼看出 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/card_matched_bg" />
+    <corners android:radius="12dp" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/card_matched_border" />
+</shape>

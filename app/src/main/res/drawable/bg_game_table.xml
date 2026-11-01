@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 游戏桌面背景：深蓝紫色渐变，突出白色的牌面 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:endColor="@color/table_dark"
+        android:startColor="@color/table_light" />
+</shape>

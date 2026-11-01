@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 信息修改界面：修改姓名、学号、电话、邮件、性别、爱好，保存后把结果回传给主界面 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 头像 -->
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="44dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_avatar_circle"
+                android:contentDescription="@string/cd_avatar"
+                android:padding="8dp"
+                android:src="@drawable/ic_avatar" />
+
+            <!-- 姓名 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/label_name"
+                android:textAppearance="@style/TextAppearance.CardFlipGame.Label" />
+
+            <EditText
+                android:id="@+id/et_name"
+                style="@style/Widget.CardFlipGame.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:hint="@string/personal_hint_name"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName"
+                android:maxLines="1" />
+
+            <!-- 学号 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/label_student_id"
+                android:textAppearance="@style/TextAppearance.CardFlipGame.Label" />
+
+            <EditText
+                android:id="@+id/et_student_id"
+                style="@style/Widget.CardFlipGame.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:hint="@string/personal_hint_student_id"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLines="1" />
+
+            <!-- 电话号码 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/label_phone"
+                android:textAppearance="@style/TextAppearance.CardFlipGame.Label" />
+
+            <EditText
+                android:id="@+id/et_phone"
+                style="@style/Widget.CardFlipGame.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:hint="@string/personal_hint_phone"
+                android:importantForAutofill="no"
+                android:inputType="phone"
+                android:maxLines="1" />
+
+            <!-- 电子邮件地址 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/label_email"
+                android:textAppearance="@style/TextAppearance.CardFlipGame.Label" />
+
+            <EditText
+                android:id="@+id/et_email"
+                style="@style/Widget.CardFlipGame.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:hint="@string/personal_hint_email"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                android:maxLines="1" />
+
+            <!-- 性别 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/personal_label_gender"
+                android:textAppearance="@style/TextAppearance.CardFlipGame.Label" />
+
+            <RadioGroup
+                android:id="@+id/rg_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_male"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="@string/gender_male"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+
+                <RadioButton
+                    android:id="@+id/rb_female"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="@string/gender_female"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <!-- 爱好（可多选） -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/personal_label_hobby"
+                android:textAppearance="@style/TextAppearance.CardFlipGame.Label" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cb_travel"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/hobby_travel"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_reading"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/hobby_reading"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_game"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/hobby_game"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_shopping"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/hobby_shopping"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    </ScrollView>
+
+    <!-- 保存 / 取消：固定在底部，不用滚动就能操作 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/card_stroke" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <Button
+            android:id="@+id/btn_save"
+            style="@style/Widget.CardFlipGame.Button"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/purple_500"
+            android:text="@string/btn_save" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.CardFlipGame.Button"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/btn_neutral"
+            android:text="@string/btn_cancel" />
+    </LinearLayout>
+</LinearLayout>

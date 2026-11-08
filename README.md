@@ -9,7 +9,7 @@ Android 移动应用开发 实验五作业：在实验四翻牌游戏的基础�
 - 语言：Kotlin + XML 布局，MVC 分层
 - 最低版本：Android 7.0（API 24）；编译版本：API 37
 - 代码托管：[GitHub - zyongquan/Android_CardFlipGame](https://github.com/zyongquan/Android_CardFlipGame)
-- 分支：`main`（实验四版本） / `Dev`（实验五版本，本分支）
+- 分支：`main`（实验五最终版本，受保护） / `Dev`（实验五开发分支）
 
 ## 运行截图
 
@@ -31,7 +31,7 @@ Android 移动应用开发 实验五作业：在实验四翻牌游戏的基础�
 
 | 实验要求 | 实现方式 |
 | --- | --- |
-| 在实验四基础上新建 `Dev` 分支完成实验五 | 从实验四 `main` 新建 `Dev` 分支，实验五代码提交到 `Dev`，`main` 保持实验四版本 |
+| 在实验四基础上新建 `Dev` 分支完成实验五 | 从实验四的 `main` 新建 `Dev` 分支完成实验五，再通过 Pull Request 合并回 `main`；`main` 已开启分支保护，禁止直接 push |
 | MainActivity 添加菜单，点击弹出关于对话框 | `menu_main.xml` + `onCreateOptionsMenu()` + `MaterialAlertDialogBuilder` |
 | RecyclerView 实现 24 张牌游戏，界面规整美观 | `RecyclerView` + `GridLayoutManager`（4 列 × 6 行），自适应牌高，一屏完整显示 |
 | 适配器从 `RecyclerView.Adapter` 派生，重载方法并处理回调 | `CardAdapter` 重写 `getItemCount / onCreateViewHolder / onBindViewHolder`，通过 `OnCardClickListener` 回调点击位置 |
@@ -113,9 +113,9 @@ app/src/main/
 
 ## Git 仓库
 
-- `main`：实验四翻牌游戏版本；
-- `Dev`：实验五 RecyclerView 版本（本分支）；
-- 实验五代码提交在 `Dev` 分支，`main` 保持不变。
+- `main`：实验五最终版本，由 `Dev` 经 Pull Request 合并；已开启分支保护（禁止直接 push、强推和删除，要求通过 PR 修改）；
+- `Dev`：实验五开发分支，合并后保留；
+- 合并后的 `main` 比 `Dev` 多一个合并提交。
 
 ## 作者
 

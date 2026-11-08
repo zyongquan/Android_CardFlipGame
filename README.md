@@ -25,7 +25,7 @@ Android 移动应用开发 实验五作业：在实验四翻牌游戏的基础�
   <img src="docs/screenshots/game_landscape.png" width="30%" alt="横屏 30 张牌" />
 </p>
 
-> 截图由 Android 9（API 29）模拟器实际运行截取；竖屏 720×1280、横屏 1280×720。
+> 截图由 Android 10（API 29）模拟器实际运行截取；竖屏 720×1280、横屏 1280×720。
 
 ## 实验要求与完成情况
 

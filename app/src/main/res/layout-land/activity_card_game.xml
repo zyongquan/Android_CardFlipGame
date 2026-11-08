@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    翻牌游戏横屏界面（View）：
+    屏幕高度小、宽度大，所以把得分和按钮放在右侧竖条里，左侧全部留给牌桌；
+    values-land 中牌数为 30 张、6 列 × 5 行，仍然一屏完整显示。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_game_table"
+    android:orientation="horizontal">
+
+    <!-- 左侧牌桌 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_cards"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:padding="6dp"
+        tools:listitem="@layout/item_card" />
+
+    <!-- 右侧信息与操作区 -->
+    <LinearLayout
+        android:layout_width="168dp"
+        android:layout_height="match_parent"
+        android:background="@color/panel_overlay"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/hud_text_secondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_hud_badge"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_reset_game"
+            style="@style/Widget.CardFlipGame.Button"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:backgroundTint="@color/teal_200"
+            android:text="@string/btn_reset_game"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            style="@style/Widget.CardFlipGame.Button"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/btn_neutral"
+            android:text="@string/btn_exit"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

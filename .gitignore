@@ -35,6 +35,7 @@ google-services.json
 *.hprof
 
 # 本项目的临时工作目录（素材、生成脚本）
+/_work/
 /_ref/
 
 # Android Studio 自动生成的 Gradle Daemon JVM 配置（本地环境相关）

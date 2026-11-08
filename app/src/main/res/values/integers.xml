@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ==================== 竖屏（默认）牌桌参数 ==================== -->
+    <!-- 实验要求：24 张牌的游戏，4 列 × 6 行 -->
+    <integer name="card_count">24</integer>
+    <integer name="card_columns">4</integer>
+</resources>

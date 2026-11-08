@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ==================== 横屏（values-land）牌桌参数 ==================== -->
+    <!-- 横屏可用宽度更大，改成 30 张牌、6 列 × 5 行，实现“横竖屏不同牌数” -->
+    <integer name="card_count">30</integer>
+    <integer name="card_columns">6</integer>
+</resources>

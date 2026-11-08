@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 主界面：展示当前玩家的基本信息，并提供进入「信息修改」「翻牌游戏」两个二级界面的入口 -->
+<!--
+    主界面：展示当前玩家的基本信息，并提供进入「信息修改」「翻牌游戏」两个二级界面的入口。
+    实验五在主界面增加了选项菜单（「关于」对话框），菜单由 MainActivity 动态加载。
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -63,6 +66,20 @@
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- 玩法提示：说明三张配对规则与横竖屏不同牌数 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_hint"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp"
+                android:text="@string/main_game_hint"
+                android:textColor="@color/teal_700"
+                android:textSize="12sp" />
 
             <!-- ==================== 基本信息卡片 ==================== -->
             <LinearLayout

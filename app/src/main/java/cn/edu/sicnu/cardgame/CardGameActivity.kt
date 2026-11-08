@@ -12,104 +12,149 @@ import cn.edu.sicnu.cardgame.databinding.ActivityCardGameBinding
  * 翻牌游戏界面（Controller + View）。
  *
  * Controller 的职责：
- *  1. 接收用户点击，调用模型 CardMatchingGame.chooseCardAtIndex() 改变模型状态；
- *  2. 操作完成后刷新界面（得分、进度、牌面），并根据本次操作弹出一条提示；
- *  3. 「重置游戏」重新 new 一个 CardMatchingGame，开始新的一局；
- *  4. 「退出」/ 返回键结束时，把本局最高分回传给主界面。
+ *  1. 读取当前屏幕方向对应的牌数 / 列数（values 与 values-land 里的整数资源）；
+ *  2. 接收适配器回调的点击，调用 CardMatchingGame.chooseCardAtIndex() 改变模型；
+ *  3. 操作完成后刷新界面（得分、进度、本轮选择数、牌面），并提示本次判定结果；
+ *  4. 「重新开始」调用模型新增的 reset() 方法；
+ *  5. 旋转屏幕时 Activity 重建，自动按横屏 / 竖屏读取不同的牌数（24 / 30）。
  */
-class CardGameActivity : AppCompatActivity() {
+class CardGameActivity : AppCompatActivity(), CardAdapter.OnCardClickListener {
 
     companion object {
         const val EXTRA_HIGH_SCORE = "extra_high_score"
-
-        /** 牌桌上的牌数：3 列 × 4 行 */
-        const val CARD_COUNT = 12
-        const val GRID_SPAN = 3
     }
 
     private lateinit var binding: ActivityCardGameBinding
     private lateinit var adapter: CardAdapter
-    private var game: CardMatchingGame? = null
+    private lateinit var game: CardMatchingGame
     private var bestScore = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCardGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.setSubtitle(R.string.subtitle_card_game)
 
         bestScore = intent.getIntExtra(EXTRA_HIGH_SCORE, 0)
 
-        binding.btnResetGame.setOnClickListener { startNewGame(showToast = true) }
+        // 竖屏 values/integers.xml：24 张、4 列；横屏 values-land/integers.xml：30 张、6 列
+        val cardCount = resources.getInteger(R.integer.card_count)
+        val columns = resources.getInteger(R.integer.card_columns)
+        game = CardMatchingGame(cardCount)
+        adapter = CardAdapter(game, this)
+
+        binding.rvCards.layoutManager = GridLayoutManager(this, columns)
+        binding.rvCards.adapter = adapter
+        // 关闭默认的列表动画，翻牌动画由适配器自己控制
+        binding.rvCards.itemAnimator = null
+        binding.rvCards.setHasFixedSize(true)
+
+        binding.btnResetGame.setOnClickListener { resetGame() }
         binding.btnExit.setOnClickListener { finishWithResult() }
         // 直接按返回键也要把最高分带回去，所以拦截返回事件
         onBackPressedDispatcher.addCallback(this) { finishWithResult() }
 
-        startNewGame(showToast = false)
-    }
-
-    /** 开始新的一局：创建新的模型，重建 / 重置列表 */
-    private fun startNewGame(showToast: Boolean) {
-        val newGame = CardMatchingGame(CARD_COUNT)
-        val isFirstGame = game == null
-        game = newGame
-
-        if (isFirstGame) {
-            adapter = CardAdapter(newGame) { index -> onCardChosen(index) }
-            binding.rvCards.layoutManager = GridLayoutManager(this, GRID_SPAN)
-            binding.rvCards.adapter = adapter
-            // 关闭默认的列表动画，翻牌动画由适配器自己控制
-            binding.rvCards.itemAnimator = null
-        } else {
-            adapter.submitGame(newGame)
+        // 牌数由屏幕方向决定：旋转后 Activity 重建，这里会重新读取 values-land 中的 30
+        binding.rvCards.addOnLayoutChangeListener { _, left, top, right, bottom,
+            oldLeft, oldTop, oldRight, oldBottom ->
+            val sizeChanged = (right - left) != (oldRight - oldLeft) ||
+                (bottom - top) != (oldBottom - oldTop)
+            if (sizeChanged) {
+                binding.rvCards.post { updateCardSize() }
+            }
         }
+        binding.rvCards.post { updateCardSize() }
 
+        supportActionBar?.setSubtitle(getString(R.string.subtitle_card_game_format, cardCount))
         updateHud()
-        if (showToast) {
-            Toast.makeText(this, R.string.game_restart, Toast.LENGTH_SHORT).show()
+
+        if (savedInstanceState != null) {
+            Toast.makeText(
+                this,
+                getString(R.string.game_orientation_changed, cardCount),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    /** 用户点击了第 index 张牌：先改模型，再同步界面 */
-    private fun onCardChosen(index: Int) {
-        val game = game ?: return
-        val scoreBefore = game.score
+    /**
+     * 根据当前牌数、列数和 RecyclerView 的可用高度计算每张牌的高度，
+     * 让 24 张（竖屏）或 30 张（横屏）牌都能在一屏内完整显示。
+     */
+    private fun updateCardSize() {
+        val recyclerView = binding.rvCards
+        val columns = resources.getInteger(R.integer.card_columns)
+        val rows = (game.cardCount + columns - 1) / columns
+        val availableHeight =
+            recyclerView.height - recyclerView.paddingTop - recyclerView.paddingBottom
+        if (availableHeight <= 0 || rows <= 0) {
+            return
+        }
+        adapter.itemHeight = availableHeight / rows
+    }
+
+    override fun onCardClick(position: Int) {
+        val selectedBefore = game.selectedCount
         val matchedBefore = game.matchedCount
 
-        game.chooseCardAtIndex(index)
+        game.chooseCardAtIndex(position)
         adapter.refresh()
         updateHud()
 
-        val delta = game.score - scoreBefore
         when {
+            // 第三次翻牌后三张牌配对成功
             game.matchedCount > matchedBefore -> {
-                Toast.makeText(this, getString(R.string.game_matched, delta), Toast.LENGTH_SHORT)
-                    .show()
+                val bonus = (game.matchedCount - matchedBefore) * game.MATCH_BONUS
+                Toast.makeText(
+                    this,
+                    getString(R.string.game_matched, bonus),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
-            delta == -(game.MISMATCH_PENALTY + game.COST_TO_CHOOSE) -> {
-                Toast.makeText(this, getString(R.string.game_mismatch, delta), Toast.LENGTH_SHORT)
-                    .show()
+            // 第三次翻牌后三张牌点数不同：全部盖回并扣分
+            selectedBefore == Card.CARDS_PER_MATCH - 1 && game.selectedCount == 0 -> {
+                Toast.makeText(
+                    this,
+                    getString(R.string.game_mismatch, -game.MISMATCH_PENALTY),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
         if (game.isGameOver) {
-            Toast.makeText(this, getString(R.string.game_win, game.score), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this, getString(R.string.game_win, game.score), Toast.LENGTH_LONG
+            ).show()
         }
     }
 
-    /** Model → View：刷新得分和配对进度 */
+    /** 重新开始一局：调用模型新增的 reset() 方法，得分清零、重新发牌 */
+    private fun resetGame() {
+        game.reset()
+        adapter.refresh()
+        updateHud()
+        Toast.makeText(this, R.string.game_restart, Toast.LENGTH_SHORT).show()
+    }
+
+    /** Model → View：刷新得分、配对进度和本轮选择数 */
     private fun updateHud() {
-        val game = game ?: return
         binding.tvScore.text = getString(R.string.game_score_format, game.score)
         binding.tvProgress.text =
             getString(R.string.game_progress_format, game.matchedCount, game.cardCount)
+        binding.tvSelection.text = when {
+            game.isGameOver -> getString(R.string.game_selection_finished)
+            game.selectedCount == 0 -> getString(R.string.game_selection_hint)
+            else -> getString(
+                R.string.game_selection_format,
+                game.selectedCount,
+                Card.CARDS_PER_MATCH
+            )
+        }
     }
 
     /** 结束本局：把最高分回传给主界面 */
     private fun finishWithResult() {
-        val score = game?.score ?: 0
-        val best = maxOf(bestScore, score)
+        val best = maxOf(bestScore, game.score)
         setResult(RESULT_OK, Intent().putExtra(EXTRA_HIGH_SCORE, best))
         finish()
     }

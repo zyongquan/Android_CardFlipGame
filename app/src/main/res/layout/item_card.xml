@@ -2,12 +2,13 @@
 <!--
     一张牌：flip_container 里叠放「牌背」和「牌面」两个图层，
     翻牌时对 flip_container 绕 Y 轴旋转 90° 后切换图层，再转回来，形成翻牌动画。
+    高度由适配器按屏幕方向、牌数和可用空间动态设置（布局里的 80dp 只是初始值）。
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_root"
     android:layout_width="match_parent"
-    android:layout_height="88dp"
-    android:padding="4dp">
+    android:layout_height="80dp"
+    android:padding="3dp">
 
     <FrameLayout
         android:id="@+id/flip_container"
@@ -20,11 +21,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bg_card_back"
-            android:elevation="3dp">
+            android:elevation="2dp">
 
             <ImageView
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_gravity="center"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_card_back_pattern" />
@@ -36,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bg_card_face"
-            android:elevation="3dp"
+            android:elevation="2dp"
             android:visibility="gone">
 
             <LinearLayout
@@ -50,14 +51,14 @@
                     android:id="@+id/tv_rank"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="26sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_suit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
             </LinearLayout>
         </FrameLayout>
     </FrameLayout>

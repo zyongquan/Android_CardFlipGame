@@ -12,6 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +20,8 @@ import org.junit.runner.RunWith
 /**
  * 翻牌游戏界面的 UI 测试。
  *
- * 覆盖：初始得分、翻第一张牌扣 1 分、再点一次取消选择、重置游戏后得分清零。
+ * 覆盖：初始得分、RecyclerView 牌数、翻第一张牌扣 1 分、
+ * 再点一次取消选择、重新开始后得分清零。
  */
 @RunWith(AndroidJUnit4::class)
 class CardGameActivityTest {
@@ -30,6 +32,9 @@ class CardGameActivityTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
     }
+
+    /** 当前屏幕方向对应的牌数：竖屏 24、横屏 30 */
+    private fun expectedCardCount(): Int = context.resources.getInteger(R.integer.card_count)
 
     @Test
     fun newGame_showsZeroScore() {
@@ -42,11 +47,23 @@ class CardGameActivityTest {
                         context.getString(
                             R.string.game_progress_format,
                             0,
-                            CardGameActivity.CARD_COUNT
+                            expectedCardCount()
                         )
                     )
                 )
             )
+            onView(withId(R.id.tv_selection))
+                .check(matches(withText(context.getString(R.string.game_selection_hint))))
+        }
+    }
+
+    @Test
+    fun recyclerView_hasCardsForCurrentOrientation() {
+        ActivityScenario.launch(CardGameActivity::class.java).use {
+            onView(withId(R.id.rv_cards)).check { view, _ ->
+                val recyclerView = view as RecyclerView
+                assertEquals(expectedCardCount(), recyclerView.adapter?.itemCount)
+            }
         }
     }
 
@@ -91,7 +108,7 @@ class CardGameActivityTest {
                         context.getString(
                             R.string.game_progress_format,
                             0,
-                            CardGameActivity.CARD_COUNT
+                            expectedCardCount()
                         )
                     )
                 )

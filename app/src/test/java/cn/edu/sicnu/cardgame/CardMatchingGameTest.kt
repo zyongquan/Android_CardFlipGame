@@ -2,22 +2,25 @@ package cn.edu.sicnu.cardgame
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
  * 模型层 CardMatchingGame 的单元测试。
- * 覆盖：初始状态、翻第一张牌扣分、再点一次取消选择、配对得分、配对失败扣分、整局结束。
+ * 覆盖：初始状态、三张一组发牌、翻牌扣分、撤销选择、三张配对 /
+ * 配对失败、已配对牌不可再点、reset()、整局结束与非法牌数。
  */
 class CardMatchingGameTest {
 
     @Test
     fun newGame_startsWithZeroScoreAndNoChosenCard() {
-        val game = CardMatchingGame(12)
+        val game = CardMatchingGame(24)
 
         assertEquals(0, game.score)
-        assertEquals(12, game.cardCount)
+        assertEquals(24, game.cardCount)
         assertEquals(0, game.matchedCount)
+        assertEquals(0, game.selectedCount)
         assertFalse(game.isGameOver)
         for (index in 0 until game.cardCount) {
             assertFalse(game.cardAtIndex(index).isChosen)
@@ -26,77 +29,86 @@ class CardMatchingGameTest {
     }
 
     @Test
-    fun dealIsPaired_everyRankHasAnEvenCount() {
-        // 成对发牌：每种点数出现的次数一定是偶数，保证一局可以清空
-        val game = CardMatchingGame(12)
+    fun dealIsGroupedByThree_everyRankCountIsMultipleOfThree() {
+        val game = CardMatchingGame(24)
         val rankCounts = (0 until game.cardCount)
             .map { game.cardAtIndex(it).rank }
             .groupingBy { it }
             .eachCount()
 
+        // 三张一组发牌：每种点数出现的次数一定是 3 的倍数，保证一局可以清空
         rankCounts.values.forEach { count ->
-            assertEquals(0, count % 2)
+            assertEquals(0, count % Card.CARDS_PER_MATCH)
         }
     }
 
     @Test
     fun chooseFirstCard_costsOnePointAndIsChosen() {
-        val game = CardMatchingGame(12)
+        val game = CardMatchingGame(24)
 
         game.chooseCardAtIndex(0)
 
         assertEquals(-1, game.score)
+        assertEquals(1, game.selectedCount)
         assertTrue(game.cardAtIndex(0).isChosen)
         assertFalse(game.cardAtIndex(0).isMatched)
     }
 
     @Test
     fun chooseSameCardTwice_cancelsSelectionWithoutExtraCost() {
-        val game = CardMatchingGame(12)
+        val game = CardMatchingGame(24)
 
         game.chooseCardAtIndex(0)
         game.chooseCardAtIndex(0)
 
         assertEquals(-1, game.score)
+        assertEquals(0, game.selectedCount)
         assertFalse(game.cardAtIndex(0).isChosen)
     }
 
     @Test
-    fun chooseTwoCardsWithSameRank_matchesBothAndAddsBonus() {
-        val game = CardMatchingGame(12)
-        val (first, second) = findPairWithSameRank(game)
+    fun chooseThreeCardsWithSameRank_matchesThemAndAddsBonus() {
+        val game = CardMatchingGame(24)
+        val (first, second, third) = findTriple(game)
 
         game.chooseCardAtIndex(first)
         game.chooseCardAtIndex(second)
+        game.chooseCardAtIndex(third)
 
-        // 第一张 -1，第二张：点数相同 4 × MATCH_BONUS(4) = 16，再扣 1 分
-        assertEquals(-1 + 16 - 1, game.score)
+        // 三张牌各扣 1 分，三张点数相同得 3 × MATCH_BONUS(4) = 12 分
+        assertEquals(-3 + 12, game.score)
         assertTrue(game.cardAtIndex(first).isMatched)
         assertTrue(game.cardAtIndex(second).isMatched)
-        assertEquals(2, game.matchedCount)
+        assertTrue(game.cardAtIndex(third).isMatched)
+        assertEquals(3, game.matchedCount)
+        assertEquals(0, game.selectedCount)
     }
 
     @Test
-    fun chooseTwoCardsWithDifferentRankAndSuit_penalisesAndFlipsFirstCardBack() {
-        val game = CardMatchingGame(12)
-        val (first, second) = findPairWithDifferentRankAndSuit(game)
+    fun chooseThreeCardsWithDifferentRanks_penalisesAndFlipsAllBack() {
+        val game = CardMatchingGame(24)
+        val (first, second, third) = findMismatch(game)
 
         game.chooseCardAtIndex(first)
         game.chooseCardAtIndex(second)
+        game.chooseCardAtIndex(third)
 
-        // 第一张 -1；第二张：配对失败 -MISMATCH_PENALTY(2)，再扣 COST_TO_CHOOSE(1)
-        assertEquals(-1 - 2 - 1, game.score)
+        // 三张牌各扣 1 分，配对失败再扣 MISMATCH_PENALTY(2)
+        assertEquals(-3 - game.MISMATCH_PENALTY, game.score)
         assertFalse(game.cardAtIndex(first).isChosen)
-        assertTrue(game.cardAtIndex(second).isChosen)
+        assertFalse(game.cardAtIndex(second).isChosen)
+        assertFalse(game.cardAtIndex(third).isChosen)
         assertEquals(0, game.matchedCount)
+        assertEquals(0, game.selectedCount)
     }
 
     @Test
     fun matchedCard_cannotBeChosenAgain() {
-        val game = CardMatchingGame(12)
-        val (first, second) = findPairWithSameRank(game)
+        val game = CardMatchingGame(24)
+        val (first, second, third) = findTriple(game)
         game.chooseCardAtIndex(first)
         game.chooseCardAtIndex(second)
+        game.chooseCardAtIndex(third)
         val scoreAfterMatch = game.score
 
         game.chooseCardAtIndex(first)
@@ -106,40 +118,84 @@ class CardMatchingGameTest {
     }
 
     @Test
-    fun matchingAllPairs_endsTheGame() {
-        val game = CardMatchingGame(12)
+    fun matchingAllTriples_endsTheGameWithFullScore() {
+        val game = CardMatchingGame(24)
 
         while (!game.isGameOver) {
-            val (first, second) = findPairWithSameRank(game)
+            val (first, second, third) = findTriple(game)
             game.chooseCardAtIndex(first)
             game.chooseCardAtIndex(second)
+            game.chooseCardAtIndex(third)
         }
 
-        assertEquals(12, game.matchedCount)
+        // 24 张牌共 8 组，每组 -3 + 12 = +9，完美通关共得 96 - 24 = 72 分
+        assertEquals(24, game.matchedCount)
+        assertEquals(72, game.score)
         assertTrue(game.isGameOver)
     }
 
-    /** 在还没配对的牌里找一对点数相同的牌，返回它们的下标 */
-    private fun findPairWithSameRank(game: CardMatchingGame): Pair<Int, Int> {
-        for (i in 0 until game.cardCount) {
-            if (game.cardAtIndex(i).isMatched) continue
-            for (j in i + 1 until game.cardCount) {
-                if (game.cardAtIndex(j).isMatched) continue
-                if (game.cardAtIndex(i).rank == game.cardAtIndex(j).rank) return i to j
-            }
+    @Test
+    fun reset_clearsScoreAndMatchedState() {
+        val game = CardMatchingGame(24)
+        val (first, second, third) = findTriple(game)
+        game.chooseCardAtIndex(first)
+        game.chooseCardAtIndex(second)
+        game.chooseCardAtIndex(third)
+        assertTrue(game.score != 0)
+
+        game.reset()
+
+        assertEquals(0, game.score)
+        assertEquals(24, game.cardCount)
+        assertEquals(0, game.matchedCount)
+        assertEquals(0, game.selectedCount)
+        assertFalse(game.isGameOver)
+        for (index in 0 until game.cardCount) {
+            assertFalse(game.cardAtIndex(index).isChosen)
+            assertFalse(game.cardAtIndex(index).isMatched)
         }
-        throw AssertionError("没有找到点数相同的牌，成对发牌逻辑有问题")
     }
 
-    /** 找两张点数、花色都不相同的牌，用于测试配对失败 */
-    private fun findPairWithDifferentRankAndSuit(game: CardMatchingGame): Pair<Int, Int> {
-        for (i in 0 until game.cardCount) {
-            for (j in i + 1 until game.cardCount) {
-                val a = game.cardAtIndex(i)
-                val b = game.cardAtIndex(j)
-                if (a.rank != b.rank && a.suit != b.suit) return i to j
-            }
+    @Test
+    fun reset_canChangeCardCountForLandscape() {
+        val game = CardMatchingGame(24)
+
+        game.reset(30)
+
+        assertEquals(30, game.cardCount)
+        assertEquals(0, game.score)
+        assertEquals(0, game.matchedCount)
+    }
+
+    @Test
+    fun invalidCardCount_throwsException() {
+        // 牌数必须是 3 的倍数
+        assertThrows(IllegalArgumentException::class.java) {
+            CardMatchingGame(25)
         }
-        throw AssertionError("没有找到点数与花色都不同的牌")
+    }
+
+    /** 在还没配对的牌里找三张点数相同的牌，返回它们的下标 */
+    private fun findTriple(game: CardMatchingGame): Triple<Int, Int, Int> {
+        val indexesByRank = mutableMapOf<String, MutableList<Int>>()
+        for (index in 0 until game.cardCount) {
+            if (game.cardAtIndex(index).isMatched) continue
+            val rank = game.cardAtIndex(index).rank
+            indexesByRank.getOrPut(rank) { mutableListOf() }.add(index)
+        }
+        val group = indexesByRank.values.firstOrNull { it.size >= Card.CARDS_PER_MATCH }
+            ?: throw AssertionError("没有找到三张点数相同的牌，三张一组发牌逻辑有问题")
+        return Triple(group[0], group[1], group[2])
+    }
+
+    /** 找三张点数互不相同的牌，用于测试配对失败 */
+    private fun findMismatch(game: CardMatchingGame): Triple<Int, Int, Int> {
+        val firstIndexByRank = mutableMapOf<String, Int>()
+        for (index in 0 until game.cardCount) {
+            firstIndexByRank.putIfAbsent(game.cardAtIndex(index).rank, index)
+        }
+        val indexes = firstIndexByRank.values.take(3)
+        check(indexes.size == 3)
+        return Triple(indexes[0], indexes[1], indexes[2])
     }
 }

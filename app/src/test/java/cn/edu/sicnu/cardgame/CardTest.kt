@@ -7,43 +7,46 @@ import org.junit.Test
 
 /**
  * 模型层 Card 的单元测试（JVM 本地测试）。
- * 主要验证实验附件里给出的配对计分规则。
+ * 实验五改为三张配对，重点验证 Card.match() 的新规则。
  */
 class CardTest {
 
     @Test
-    fun sameRankDifferentSuit_scoresFour() {
+    fun threeCardsSameRank_scoresThree() {
+        val aceOfHeart = Card(suit = "♥", rank = "A")
+        val aceOfSpade = Card(suit = "♠", rank = "A")
+        val aceOfDiamond = Card(suit = "♦", rank = "A")
+
+        // 三张点数相同：返回 3，控制器再乘以 MATCH_BONUS(4) 得到 12 分
+        assertEquals(3, aceOfHeart.match(arrayOf(aceOfSpade, aceOfDiamond)))
+    }
+
+    @Test
+    fun threeCardsDifferentRank_scoresZero() {
+        val ace = Card(suit = "♥", rank = "A")
+        val king = Card(suit = "♠", rank = "K")
+        val queen = Card(suit = "♦", rank = "Q")
+
+        assertEquals(0, ace.match(arrayOf(king, queen)))
+    }
+
+    @Test
+    fun onlyTwoCards_scoresZero() {
         val aceOfHeart = Card(suit = "♥", rank = "A")
         val aceOfSpade = Card(suit = "♠", rank = "A")
 
-        assertEquals(4, aceOfHeart.match(arrayOf(aceOfSpade)))
+        // 实验五是三张配对，只传入一张其它牌时不能算配对
+        assertEquals(0, aceOfHeart.match(arrayOf(aceOfSpade)))
     }
 
     @Test
-    fun sameSuitDifferentRank_scoresOne() {
+    fun sameSuitDifferentRank_scoresZero() {
         val aceOfHeart = Card(suit = "♥", rank = "A")
         val kingOfHeart = Card(suit = "♥", rank = "K")
+        val queenOfHeart = Card(suit = "♥", rank = "Q")
 
-        assertEquals(1, aceOfHeart.match(arrayOf(kingOfHeart)))
-    }
-
-    @Test
-    fun differentRankAndSuit_scoresZero() {
-        val aceOfHeart = Card(suit = "♥", rank = "A")
-        val kingOfSpade = Card(suit = "♠", rank = "K")
-
-        assertEquals(0, aceOfHeart.match(arrayOf(kingOfSpade)))
-    }
-
-    @Test
-    fun moreThanOneOtherCard_scoresZero() {
-        val card = Card(suit = "♥", rank = "A")
-        val otherCards = arrayOf(
-            Card(suit = "♥", rank = "A"),
-            Card(suit = "♠", rank = "A")
-        )
-
-        assertEquals(0, card.match(otherCards))
+        // 花色不参与配对，避免出现无法清空的“同花但不同点数”组合
+        assertEquals(0, aceOfHeart.match(arrayOf(kingOfHeart, queenOfHeart)))
     }
 
     @Test

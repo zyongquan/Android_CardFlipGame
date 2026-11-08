@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 翻牌游戏界面：顶部是得分与进度，中间是牌桌（12 张牌），底部是「重置游戏」「退出」 -->
+<!--
+    翻牌游戏竖屏界面（View）：
+    RecyclerView 以 4 列 × 6 行展示 24 张牌，一屏完整显示；
+    顶部显示得分、配对进度和本轮选择数，底部是「重新开始」「退出」按钮。
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +11,7 @@
     android:background="@drawable/bg_game_table"
     android:orientation="vertical">
 
-    <!-- 得分条 -->
+    <!-- 顶部信息条：得分 / 已配对 / 本轮已选 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,7 +19,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="18dp"
-        android:paddingTop="14dp"
+        android:paddingTop="12dp"
         android:paddingEnd="18dp"
         android:paddingBottom="4dp">
 
@@ -30,22 +34,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                tools:text="得分：0" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textColor="#CCFFFFFF"
-                android:textSize="13sp"
-                tools:text="已配对 0 / 12 张" />
+                android:textColor="@color/hud_text_secondary"
+                android:textSize="13sp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_hud_badge"
+            android:gravity="center"
+            android:maxWidth="160dp"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- 牌桌：3 列网格 -->
+    <!-- 牌桌：控制器按牌数与可用高度计算每张牌的高度，24 张牌无需滚动 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cards"
         android:layout_width="match_parent"
@@ -53,9 +69,9 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:overScrollMode="never"
-        android:paddingStart="10dp"
+        android:paddingStart="8dp"
         android:paddingTop="4dp"
-        android:paddingEnd="10dp"
+        android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         tools:listitem="@layout/item_card" />
 
@@ -73,20 +89,22 @@
             android:id="@+id/btn_reset_game"
             style="@style/Widget.CardFlipGame.Button"
             android:layout_width="0dp"
-            android:layout_height="54dp"
+            android:layout_height="52dp"
             android:layout_weight="1"
             android:backgroundTint="@color/teal_200"
             android:text="@string/btn_reset_game"
-            android:textColor="@color/text_primary" />
+            android:textColor="@color/text_primary"
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/btn_exit"
             style="@style/Widget.CardFlipGame.Button"
             android:layout_width="0dp"
-            android:layout_height="54dp"
+            android:layout_height="52dp"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:backgroundTint="@color/btn_neutral"
-            android:text="@string/btn_exit" />
+            android:text="@string/btn_exit"
+            android:textSize="15sp" />
     </LinearLayout>
 </LinearLayout>

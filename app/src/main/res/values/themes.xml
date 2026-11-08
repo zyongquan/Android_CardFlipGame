@@ -3,9 +3,10 @@
 
     <!--
         应用主题：带 ActionBar，标题栏固定显示「姓名+学号」，各页面用副标题区分。
-        实验指导书补充说明：新版 Android Studio 默认的 Material3 主题会让按钮设置背景后没有变化，
-        需要把主题改成 Theme.MaterialComponents.DayNight.DarkActionBar.Bridge。
-        这里按指导书的建议使用 Bridge 主题，按钮则统一用下面的 Widget.CardFlipGame.Button 样式：
+        实验五继续沿用实验四的 Bridge 主题。实验指导书补充说明：新版 Android Studio 默认的
+        Material3 主题会让按钮设置背景后没有变化，需要把主题改成
+        Theme.MaterialComponents.DayNight.DarkActionBar.Bridge。
+        按钮统一使用下面的 Widget.CardFlipGame.Button 样式：
         background 指定圆角背景 drawable，backgroundTint 指定颜色，保证按钮颜色一定生效。
     -->
     <style name="Theme.CardFlipGame" parent="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge">

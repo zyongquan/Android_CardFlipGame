@@ -1,5 +1,5 @@
-// 实验四「翻牌游戏」顶层设置脚本
-// 仓库源与实验三保持一致：插件走 google / mavenCentral / gradlePluginPortal，
+// 实验五「RecyclerView 翻牌游戏应用」顶层设置脚本
+// 在实验四工程的基础上继续开发：插件仓库仍为 google / mavenCentral / gradlePluginPortal，
 // 模块依赖只允许从 google() 和 mavenCentral() 解析。
 pluginManagement {
     repositories {
@@ -27,5 +27,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CardFlipGame"
+rootProject.name = "RecyclerViewGame"
 include(":app")

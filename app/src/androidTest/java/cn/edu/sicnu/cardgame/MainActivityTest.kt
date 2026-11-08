@@ -19,7 +19,8 @@ import org.junit.runner.RunWith
 /**
  * 主界面的 UI 测试（仪器化测试，需要模拟器 / 真机）。
  *
- * 覆盖：玩家信息显示、进入信息修改界面修改后回传、取消修改、进入并退出翻牌游戏界面。
+ * 覆盖：玩家信息显示、菜单「关于」对话框、进入信息修改界面修改后回传、
+ * 取消修改、进入并退出翻牌游戏界面。
  */
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
@@ -55,6 +56,19 @@ class MainActivityTest {
                 .check(
                     matches(withText(context.getString(R.string.main_high_score_format, 0)))
                 )
+        }
+    }
+
+    @Test
+    fun aboutMenu_showsAboutDialog() {
+        ActivityScenario.launch(MainActivity::class.java).use {
+            // 点击 ActionBar 上的「关于」菜单项
+            onView(withId(R.id.action_about)).perform(click())
+
+            onView(withText(context.getString(R.string.about_title)))
+                .check(matches(isDisplayed()))
+            onView(withText(context.getString(R.string.about_ok))).perform(click())
+            onView(withId(R.id.tv_name)).check(matches(isDisplayed()))
         }
     }
 

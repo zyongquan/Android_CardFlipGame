@@ -2,15 +2,16 @@
 <resources>
     <!-- 提交要求(1)：APP 应用标题为自己的「姓名+学号」 -->
     <string name="app_name">周勇权2024180750</string>
+    <string name="app_version">1.0</string>
 
     <!-- 作者信息（默认的玩家资料，可在“信息修改”界面里改） -->
     <string name="author_name">周勇权</string>
     <string name="author_student_id">2024180750</string>
 
     <!-- 各页面 ActionBar 副标题（标题固定为 app_name） -->
-    <string name="subtitle_main">实验四 · 翻牌游戏</string>
-    <string name="subtitle_personal_info">信息修改</string>
-    <string name="subtitle_card_game">翻牌游戏</string>
+    <string name="subtitle_main">实验五 · RecyclerView 翻牌游戏</string>
+    <string name="subtitle_personal_info">个人信息修改</string>
+    <string name="subtitle_card_game_format">翻牌游戏 · %1$d 张牌</string>
 
     <!-- ==================== 通用 ==================== -->
     <string name="gender_male">男</string>
@@ -21,11 +22,12 @@
     <string name="hobby_shopping">购物</string>
     <string name="hobby_separator">、</string>
     <string name="value_empty">（未填写）</string>
-    <string name="cd_avatar">玩家头像</string>
+    <string name="cd_avatar">头像</string>
 
     <!-- ==================== 主界面 MainActivity ==================== -->
     <string name="main_avatar_desc">玩家头像</string>
     <string name="main_card_title">基本信息</string>
+    <string name="main_game_hint">玩法：翻开三张点数相同的牌即可配对；横竖屏自动切换牌数</string>
     <string name="label_name">姓名</string>
     <string name="label_gender">性别</string>
     <string name="label_student_id">学号</string>
@@ -36,6 +38,13 @@
     <string name="main_high_score_format">%1$d 分</string>
     <string name="btn_edit_info">修改个人信息</string>
     <string name="btn_start_game">翻牌游戏</string>
+
+    <!-- ==================== 选项菜单与「关于」对话框 ==================== -->
+    <string name="menu_about">关于</string>
+    <string name="about_title">关于本应用</string>
+    <string name="about_message">应用名称：%1$s\n版本号：%2$s\n作者：%3$s  %4$s\n实验：实验五 · RecyclerView 翻牌游戏应用\n技术：Kotlin / RecyclerView / MVC\n玩法：三张同点数配对，横竖屏 24 / 30 张牌。</string>
+    <string name="about_ok">确定</string>
+    <string name="cd_menu_about">打开关于对话框</string>
 
     <!-- ==================== 信息修改 PersonalInfoActivity ==================== -->
     <string name="personal_hint_name">请输入姓名</string>
@@ -52,12 +61,16 @@
     <!-- ==================== 翻牌游戏 CardGameActivity ==================== -->
     <string name="game_score_format">得分：%1$d</string>
     <string name="game_progress_format">已配对 %1$d / %2$d 张</string>
-    <string name="btn_reset_game">重置游戏</string>
+    <string name="game_selection_hint">请翻开 3 张同点数的牌</string>
+    <string name="game_selection_format">本轮已选 %1$d / %2$d 张</string>
+    <string name="game_selection_finished">本局已完成</string>
+    <string name="btn_reset_game">重新开始</string>
     <string name="btn_exit">退出</string>
     <string name="cd_card_back">第 %1$d 张牌，未翻开</string>
     <string name="cd_card_face">第 %1$d 张牌，%2$s</string>
-    <string name="game_matched">配对成功！+%1$d 分</string>
-    <string name="game_mismatch">没有配对成功，%1$d 分</string>
+    <string name="game_matched">三张点数相同，配对成功！+%1$d 分</string>
+    <string name="game_mismatch">三张牌点数不同，%1$d 分</string>
     <string name="game_win">恭喜！全部配对完成，本局得分 %1$d</string>
     <string name="game_restart">已重新开始一局</string>
+    <string name="game_orientation_changed">屏幕方向已切换，按当前方向重新发牌：%1$d 张</string>
 </resources>

@@ -2,16 +2,20 @@ package cn.edu.sicnu.cardgame
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import cn.edu.sicnu.cardgame.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * 主界面（Controller + View）。
  *
  * 负责：读取 PlayerRepository 里的玩家信息并显示；
- *       提供「修改个人信息」「翻牌游戏」两个入口，接收二级界面回传的结果并刷新界面。
+ *       提供「修改个人信息」「翻牌游戏」两个入口；
+ *       增加选项菜单（实验要求），点击「关于」后弹出 Material 对话框。
  */
 class MainActivity : AppCompatActivity() {
 
@@ -64,6 +68,42 @@ class MainActivity : AppCompatActivity() {
                 .putExtra(CardGameActivity.EXTRA_HIGH_SCORE, player.highScore)
             cardGameLauncher.launch(intent)
         }
+    }
+
+    /** 加载选项菜单：menu_main.xml 里只有一个「关于」菜单项 */
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    /** 点击菜单项：弹出「关于」对话框 */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_about -> {
+                showAboutDialog()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    /** 用 MaterialAlertDialogBuilder 显示应用名称、版本、作者与玩法说明 */
+    private fun showAboutDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setIcon(R.drawable.ic_info)
+            .setTitle(R.string.about_title)
+            .setMessage(
+                getString(
+                    R.string.about_message,
+                    getString(R.string.app_name),
+                    getString(R.string.app_version),
+                    getString(R.string.author_name),
+                    getString(R.string.author_student_id)
+                )
+            )
+            .setPositiveButton(R.string.about_ok, null)
+            .show()
     }
 
     override fun onResume() {

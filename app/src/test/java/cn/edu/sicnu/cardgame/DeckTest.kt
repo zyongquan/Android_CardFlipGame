@@ -8,7 +8,7 @@ import org.junit.Test
 
 /**
  * 模型层 Deck 的单元测试。
- * 验证一副牌是 52 张、每次抽到的牌都不同，并且可以按点数抽牌（成对发牌用）。
+ * 验证一副牌是 52 张、每次抽到的牌都不同，并且可以按点数成组抽牌（三张配对发牌用）。
  */
 class DeckTest {
 
@@ -53,6 +53,45 @@ class DeckTest {
     @Test
     fun drawCardWithRank_returnsNullWhenRankNotExists() {
         assertNull(Deck().drawCardWithRank("不是扑克牌的点数"))
+    }
+
+    @Test
+    fun drawCardsWithSameRank_returnsThreeCardsWithSameRank() {
+        val deck = Deck()
+
+        val cards = deck.drawCardsWithSameRank(Card.CARDS_PER_MATCH)
+
+        assertEquals(Card.CARDS_PER_MATCH, cards.size)
+        assertEquals(1, cards.map { it.rank }.distinct().size)
+        assertEquals(52 - Card.CARDS_PER_MATCH, deck.size)
+    }
+
+    @Test
+    fun drawCardsWithSameRank_returnsEmptyWhenCountTooLarge() {
+        val deck = Deck()
+
+        // 每种点数最多 4 张，一次抽 5 张同点数的牌一定抽不出来
+        val cards = deck.drawCardsWithSameRank(5)
+
+        assertTrue(cards.isEmpty())
+        assertEquals(52, deck.size)
+    }
+
+    @Test
+    fun drawEightTriples_covers24CardsGroupedByRank() {
+        val deck = Deck()
+        val drawn = mutableListOf<Card>()
+
+        repeat(8) {
+            val triple = deck.drawCardsWithSameRank(Card.CARDS_PER_MATCH)
+            assertEquals(Card.CARDS_PER_MATCH, triple.size)
+            drawn.addAll(triple)
+        }
+
+        assertEquals(24, drawn.size)
+        drawn.groupingBy { it.rank }.eachCount().values.forEach { count ->
+            assertEquals(0, count % Card.CARDS_PER_MATCH)
+        }
     }
 
     @Test

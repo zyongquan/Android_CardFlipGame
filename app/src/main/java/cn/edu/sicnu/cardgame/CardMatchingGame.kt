@@ -1,33 +1,38 @@
 package cn.edu.sicnu.cardgame
 
+import java.io.Serializable
+
 /**
  * 翻牌游戏模型（Model 层）。
  *
- * 实验五在实验四的基础上把「两张配对」改成「三张配对」，规则如下：
+ * 实验六在实验五的三张配对基础上做了通用化：构造时通过 cardsPerMatch 指定一局配对
+ * 需要几张牌，2 表示两张玩法，3 表示三张玩法。两种玩法共用同一套计分和状态管理。
+ *
+ * 规则：
  *  - 每翻开一张牌扣 COST_TO_CHOOSE（1 分）；
- *  - 本轮累计翻开 3 张牌后判定：三张点数相同得 3 × MATCH_BONUS（12 分），
- *    三张牌进入 isMatched 状态；
- *  - 三张点数不同则扣 MISMATCH_PENALTY（2 分），三张牌全部重新盖上；
+ *  - 本轮翻开 cardsPerMatch 张牌后判定：点数全部相同加分并标记已配对；否则扣
+ *    MISMATCH_PENALTY（2 分）并把本轮所有牌盖回；
  *  - 点击本轮已经翻开的牌可以撤销选择，不额外扣分。
  *
- * 为界面补充的成员：
- *  - reset()：重新发牌并清零得分（实验要求）；
- *  - cardCount / matchedCount / isGameOver：控制器刷新“已配对 n / m”与胜利提示；
- *  - selectedCount：控制器显示“本轮已选 n / 3 张”。
- *
- * 发牌按“三张同点数”为一组抽取，保证一局一定能被清空。
- * 横屏、竖屏通过构造参数传入不同的牌数（24 / 30）。
+ * CardMatchingGame 实现 Serializable，Fragment 在 onStop() 中把整个对象写入文件，
+ * 再次打开应用时可以恢复牌面、得分和选择状态。
  */
-class CardMatchingGame(count: Int) {
+class CardMatchingGame(
+    count: Int,
+    val cardsPerMatch: Int = Card.CARDS_PER_MATCH
+) : Serializable {
+
     companion object {
-        /** 单局最多牌数：13 种点数 × 每种 3 张 = 39 张 */
+        private const val serialVersionUID = 1L
+
+        /** 单局最多牌数（三张玩法）：13 种点数 × 每种 3 张 = 39 张 */
         const val MAX_CARD_COUNT = 39
     }
 
     var score = 0
         private set
 
-    /** 当前牌数；reset(count) 可以在换屏幕方向导致牌数变化时重新指定 */
+    /** 当前牌数 */
     var cardCount = count
         private set
 
@@ -42,20 +47,22 @@ class CardMatchingGame(count: Int) {
     }
 
     private fun requireValidCount(count: Int) {
-        require(count in Card.CARDS_PER_MATCH..MAX_CARD_COUNT) {
-            "card count must be between ${Card.CARDS_PER_MATCH} and $MAX_CARD_COUNT"
+        require(cardsPerMatch in 2..3) { "cardsPerMatch must be 2 or 3" }
+        val maxCount = Card.rankStrings.size * cardsPerMatch
+        require(count in cardsPerMatch..maxCount) {
+            "card count must be between $cardsPerMatch and $maxCount"
         }
-        require(count % Card.CARDS_PER_MATCH == 0) {
-            "card count must be a multiple of ${Card.CARDS_PER_MATCH}"
+        require(count % cardsPerMatch == 0) {
+            "card count must be a multiple of $cardsPerMatch"
         }
     }
 
-    /** 发牌：每次从牌堆里抽出一组点数相同的三张牌 */
+    /** 发牌：每次从牌堆里抽出一组点数相同的牌 */
     private fun deal(count: Int) {
         cards.clear()
         val deck = Deck()
-        repeat(count / Card.CARDS_PER_MATCH) {
-            val group = deck.drawCardsWithSameRank(Card.CARDS_PER_MATCH)
+        repeat(count / cardsPerMatch) {
+            val group = deck.drawCardsWithSameRank(cardsPerMatch)
             check(group.isNotEmpty()) { "deck does not have enough cards" }
             cards.addAll(group)
         }
@@ -69,7 +76,7 @@ class CardMatchingGame(count: Int) {
     val matchedCount: Int
         get() = cards.count { it.isMatched }
 
-    /** 本轮已经翻开的牌数（0 ~ 3） */
+    /** 本轮已经翻开的牌数（0 ~ cardsPerMatch） */
     val selectedCount: Int
         get() = chosenCards.size
 
@@ -82,9 +89,9 @@ class CardMatchingGame(count: Int) {
     val COST_TO_CHOOSE = 1
 
     /**
-     * 重新开始一局（实验要求新增的 reset 方法）。
+     * 重新开始一局：清零得分、清空选择并重新发牌。
      *
-     * @param count 新一局的牌数，默认沿用当前牌数；横竖屏切换时也可以传入新的牌数。
+     * @param count 新一局的牌数，默认沿用当前牌数
      */
     fun reset(count: Int = cardCount) {
         requireValidCount(count)
@@ -95,11 +102,10 @@ class CardMatchingGame(count: Int) {
     }
 
     /**
-     * 翻开 / 选中第 [index] 张牌（3 张配对的核心逻辑）。
+     * 翻开 / 选中第 [index] 张牌。
      *
-     * 选中第 3 张牌时调用 Card.match() 进行判定：
-     *  - 配对成功：三张牌标记为 isMatched，并加 MATCH_BONUS × 3 分；
-     *  - 配对失败：三张牌重新盖上，并扣 MISMATCH_PENALTY 分。
+     * 已配对的牌直接忽略；再次点击本轮已翻开的牌则撤销选择；否则扣 1 分并加入
+     * 本轮选择。累计到 cardsPerMatch 张时调用 judgeChosenCards() 判定。
      */
     fun chooseCardAtIndex(index: Int) {
         val card = cardAtIndex(index)
@@ -107,7 +113,6 @@ class CardMatchingGame(count: Int) {
             return
         }
 
-        // 再次点击本轮已翻开的牌：撤销选择，不额外扣分
         if (card.isChosen) {
             card.isChosen = false
             chosenCards.remove(card)
@@ -118,15 +123,15 @@ class CardMatchingGame(count: Int) {
         chosenCards.add(card)
         score -= COST_TO_CHOOSE
 
-        if (chosenCards.size == Card.CARDS_PER_MATCH) {
+        if (chosenCards.size == cardsPerMatch) {
             judgeChosenCards()
         }
     }
 
-    /** 对本轮翻开的三张牌做一次配对判定 */
+    /** 对本轮翻开的牌做一次配对判定 */
     private fun judgeChosenCards() {
         val picked = chosenCards.toList()
-        val matchScore = picked[0].match(arrayOf(picked[1], picked[2]))
+        val matchScore = picked[0].match(picked.drop(1).toTypedArray())
 
         if (matchScore > 0) {
             score += matchScore * MATCH_BONUS

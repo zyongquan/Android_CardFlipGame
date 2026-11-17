@@ -14,11 +14,11 @@ import cn.edu.sicnu.cardgame.databinding.ItemCardBinding
  * onBindViewHolder() 三个方法，把模型里每张牌的 isChosen / isMatched 状态
  * 同步成界面上的牌背 / 牌面 / 已配对样式，并在状态变化时播放翻牌动画。
  *
- * 用户点击某张牌时，通过 [OnCardClickListener] 回调把位置交给控制器（Activity），
+ * 用户点击某张牌时，通过 [OnCardClickListener] 回调把位置交给控制器（Fragment），
  * 由控制器调用模型并刷新界面，实现 View 与 Model 的解耦。
  *
- * 牌的高度由控制器根据屏幕方向、牌数与可用空间计算后通过 [itemHeight] 设置，
- * 这样竖屏 24 张、横屏 30 张都能一屏完整显示，不需要滚动。
+ * 牌的高度由控制器根据牌数与可用空间计算后通过 [itemHeight] 设置，
+ * 两张牌、三张牌两种牌桌都能一屏完整显示，不需要滚动。
  */
 class CardAdapter(
     private var game: CardMatchingGame,

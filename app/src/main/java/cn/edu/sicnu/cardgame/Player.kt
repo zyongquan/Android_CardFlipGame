@@ -1,6 +1,8 @@
 package cn.edu.sicnu.cardgame
 
-/** 性别（Model 层只保存枚举，显示文字由 View / Controller 通过字符串资源映射） */
+import java.io.Serializable
+
+/** 性别（Model 层只保存枚举，显示文字由 View 层通过字符串资源映射） */
 enum class Gender { MALE, FEMALE }
 
 /** 爱好（可多选） */
@@ -9,10 +11,9 @@ enum class Hobby { TRAVEL, READING, GAME, SHOPPING }
 /**
  * 玩家信息（Model 层）。
  *
- * 实验要求(2)：修改后的信息无需保存到文件中，因此这里只把数据放在内存里的
- * PlayerRepository 单例中，3 个 Activity 通过它共享同一份数据。
- *
- * 实现 Serializable 是为了能直接放进 Intent，在 Activity 之间传递。
+ * 实验六要求个人信息也采用序列化方式保存：PersonalInfoFragment 使用
+ * ObjectOutputStream 把 Player 写入 player.dat，再次打开应用时用
+ * ObjectInputStream 读回，从而恢复上次保存的姓名、学号、电话、邮箱、性别和爱好。
  */
 data class Player(
     var name: String,
@@ -21,6 +22,11 @@ data class Player(
     var email: String,
     var gender: Gender,
     val hobbies: MutableSet<Hobby>,
-    /** 游戏最高分，随对局结果更新 */
+    /** 兼容实验四、实验五保留的最高分字段 */
     var highScore: Int = 0
-) : java.io.Serializable
+) : Serializable {
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+}

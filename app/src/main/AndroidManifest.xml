@@ -11,27 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CardFlipGame">
 
-        <!-- 主界面：显示玩家基本信息（姓名、性别、学号、电话、邮件、爱好、游戏最高分） -->
+        <!-- 实验六：MainActivity 只作为 Fragment 容器和底部导航宿主 -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- 二级界面：修改个人信息（保存后把结果回传给主界面） -->
-        <activity
-            android:name=".PersonalInfoActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- 二级界面：翻牌游戏 -->
-        <activity
-            android:name=".CardGameActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_personal"
+        android:icon="@drawable/ic_nav_person"
+        android:title="@string/nav_personal" />
+    <item
+        android:id="@+id/nav_two_card"
+        android:icon="@drawable/ic_nav_cards_two"
+        android:title="@string/nav_two_card" />
+    <item
+        android:id="@+id/nav_three_card"
+        android:icon="@drawable/ic_nav_cards_three"
+        android:title="@string/nav_three_card" />
+</menu>

@@ -1,22 +1,27 @@
 package cn.edu.sicnu.cardgame
 
+import java.io.Serializable
+
 /**
  * 一张扑克牌（Model 层）。
  *
- * 实验五把玩法从「两张配对」改成「三张配对」，所以 match() 改为接收另外两张牌：
- * 只有三张牌的点数完全相同时才返回 [CARDS_PER_MATCH]（即每张牌记 1 分），
- * 其余情况返回 0。花色不参与配对，这样每一局发出的同点数三张牌一定能被清空。
+ * 实验六同时支持「两张配对」和「三张配对」两种玩法，所以 match() 允许传入 1 张或 2 张
+ * 其它牌：点数全部相同才算配对，返回该组牌的基础分（两张为 4，三张为 3）。
+ * 花色不参与配对，保证一局发出的同点数牌都能被清空。
  *
- * 花色 / 点数保持 val：模型不需要再修改它们，而 View 层需要读取它们来显示牌面与配色。
+ * Card 实现 Serializable，随 CardMatchingGame 一起写入文件，退出程序后可以恢复牌局。
  */
 class Card(
     val suit: String,
     val rank: String,
     var isChosen: Boolean = false,
     var isMatched: Boolean = false
-) {
+) : Serializable {
+
     companion object {
-        /** 一局配对所需的牌数：实验五为 3 张 */
+        private const val serialVersionUID = 1L
+
+        /** 实验五留下的常量，表示三张配对；实验六的模型改用 cardsPerMatch 实例字段 */
         const val CARDS_PER_MATCH = 3
 
         val rankStrings = arrayOf(
@@ -35,19 +40,22 @@ class Card(
         get() = suit == "♥" || suit == "♦"
 
     /**
-     * 与另外两张牌比较：三张牌点数都相同才算配对成功。
+     * 与其它牌比较：这些牌的点数都与本牌相同才算配对成功。
      *
-     * 返回值是“每张牌的基础分”，控制器再乘以 [CardMatchingGame.MATCH_BONUS] 加到总分：
-     *  - 三张点数相同：返回 3（3 × 4 = 12 分）；
-     *  - 其它情况：返回 0。
-     *
-     * 实验要求只修改本方法与 CardMatchingGame.chooseCardAtIndex() 即可完成 3 张牌玩法。
+     * @param otherCards 另外 1 张（两张玩法）或 2 张（三张玩法）牌
+     * @return 两张玩法返回 4，三张玩法返回 3；点数不同返回 0
      */
     fun match(otherCards: Array<Card>): Int {
-        if (otherCards.size != CARDS_PER_MATCH - 1) {
+        if (otherCards.isEmpty() || otherCards.size > 2) {
             return 0
         }
-        val allSameRank = otherCards.all { it.rank == rank }
-        return if (allSameRank) CARDS_PER_MATCH else 0
+        if (!otherCards.all { it.rank == rank }) {
+            return 0
+        }
+        return when (otherCards.size) {
+            1 -> 4
+            2 -> 3
+            else -> 0
+        }
     }
 }

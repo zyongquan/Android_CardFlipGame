@@ -1,9 +1,8 @@
-// 实验五「RecyclerView 翻牌游戏应用」应用模块
-// 在实验四的 3 个 Activity（玩家信息 / 信息修改 / 翻牌游戏）基础上：
-//  1. 主界面增加选项菜单，点击「关于」弹出对话框；
-//  2. 翻牌游戏改用 RecyclerView + GridLayoutManager 展示 24 张牌；
-//  3. 游戏模型改成三张牌配对，并新增 reset() 方法；
-//  4. 通过 values / values-land 的资源限定符支持横屏、竖屏不同牌数。
+// 实验六「多 Fragment 应用」应用模块
+// 在实验五 RecyclerView 翻牌游戏的基础上：
+//  1. 用 3 个 Fragment 重构 APP（个人信息 / 2 张牌翻牌 / 3 张牌翻牌）；
+//  2. 用 BottomNavigationView 切换 Fragment；
+//  3. 个人信息和两种牌局都通过 ObjectOutputStream/ObjectInputStream 序列化保存，退出后可恢复。
 //
 // 说明：AGP 9 已内置 Kotlin 支持（built-in Kotlin），因此这里不再显式应用
 // org.jetbrains.kotlin.android 插件，直接使用 android {} 与 kotlin {} 扩展即可。
@@ -21,7 +20,7 @@ android {
         applicationId = "cn.edu.sicnu.cardgame"
         minSdk = 24
         targetSdk = 37
-        versionCode = 2
+        versionCode = 3
         versionName = "1.0"
 
         // 实验要求：使用 Android Studio 的单元测试与 UI 测试，这里指定 UI 测试的运行器
